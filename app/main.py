@@ -17,7 +17,7 @@ settings = get_settings()
 store = DocumentStore(settings.docs_dir)
 assistant = RAGAssistant(
     store,
-    openai_api_key=settings.openai_api_key,
+    openai_api_key=settings.openai_api_key if settings.use_openai else None,
     model=settings.openai_model,
 )
 

@@ -265,9 +265,9 @@ class RAGAssistant:
                 return result
 
         retrieval = self.store.retrieve(enriched, top_k=3)
-        answer = self._maybe_openai(query, retrieval.chunks) or self._build_answer(
-            query, retrieval.chunks
-        )
+        llm_answer = self._maybe_openai(query, retrieval.chunks)
+        answer = llm_answer or self._build_answer(query, retrieval.chunks)
+        used_model = "openai" if llm_answer else "deterministic-rag"
 
         # Strip accidental PII echoes from generation
         for pat in PII_PATTERNS:
@@ -290,7 +290,7 @@ class RAGAssistant:
             refused=False,
             refusal_reason=None,
             tool_calls=tool_calls,
-            model="openai" if self.openai_api_key else "deterministic-rag",
+            model=used_model,
             grounded=bool(retrieval.chunks),
         )
         history.append({"role": "user", "content": query})

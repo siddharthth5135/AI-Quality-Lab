@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     golden_path: Path = ROOT / "data" / "golden" / "golden_set.json"
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
+    use_openai: bool = False  # set USE_OPENAI=true to enable live LLM generation
     eval_mode: str = "heuristic"  # heuristic | deepeval
     faithfulness_threshold: float = 0.70
     relevancy_threshold: float = 0.70
