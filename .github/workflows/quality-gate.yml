@@ -27,8 +27,8 @@ jobs:
       - name: Generate golden dataset
         run: python scripts/generate_golden_set.py
 
-      - name: API + safety + agent tests
-        run: pytest -m "api or safety or agent" --tb=short
+      - name: API + safety + agent + SQL data validation tests
+        run: pytest -m "api or safety or agent or data" --tb=short
 
       - name: LLM evaluation gate
         run: python eval/run_eval.py

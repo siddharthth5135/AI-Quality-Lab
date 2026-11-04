@@ -1,0 +1,6 @@
+{
+  "avg_faithfulness": 0.8073,
+  "avg_answer_relevancy": 1.0,
+  "avg_context_precision": 1.0,
+  "hallucination_rate": 0.1927
+}

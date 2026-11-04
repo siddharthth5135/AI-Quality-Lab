@@ -11,10 +11,12 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
     docs_dir: Path = ROOT / "data" / "docs"
     golden_path: Path = ROOT / "data" / "golden" / "golden_set.json"
+    log_db_path: Path = ROOT / "reports" / "conversations.db"
+    cost_per_1k_tokens_usd: float = 0.00015
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
     use_openai: bool = False  # set USE_OPENAI=true to enable live LLM generation
-    eval_mode: str = "heuristic"  # heuristic | deepeval
+    eval_mode: str = "heuristic"  # heuristic | deepeval | ragas
     faithfulness_threshold: float = 0.70
     relevancy_threshold: float = 0.70
     hallucination_threshold: float = 0.30  # max allowed rate

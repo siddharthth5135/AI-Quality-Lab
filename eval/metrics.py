@@ -70,6 +70,37 @@ def score_answer(
     )
 
 
+def try_ragas_scores(question: str, answer: str, contexts: list[str], expected: str) -> MetricScores | None:
+    """Optional Ragas path when OPENAI_API_KEY is present and ragas is installed."""
+    import os
+
+    if not os.getenv("OPENAI_API_KEY"):
+        return None
+    try:
+        from datasets import Dataset
+        from ragas import evaluate
+        from ragas.metrics import answer_relevancy, context_precision, faithfulness
+
+        ds = Dataset.from_dict(
+            {
+                "question": [question],
+                "answer": [answer],
+                "contexts": [contexts or [expected]],
+                "ground_truth": [expected],
+            }
+        )
+        result = evaluate(ds, metrics=[faithfulness, answer_relevancy, context_precision]).to_pandas().iloc[0]
+        f = float(result["faithfulness"])
+        return MetricScores(
+            faithfulness=f,
+            answer_relevancy=float(result["answer_relevancy"]),
+            context_precision=float(result["context_precision"]),
+            hallucination=max(0.0, 1.0 - f),
+        )
+    except Exception:
+        return None
+
+
 def try_deepeval_scores(question: str, answer: str, contexts: list[str], expected: str) -> MetricScores | None:
     """Optional DeepEval path when OPENAI_API_KEY is present and package works."""
     import os

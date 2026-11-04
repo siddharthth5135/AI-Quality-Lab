@@ -1,6 +1,7 @@
 """FastAPI application: live RAG demo + OpenAPI surface for tests."""
 from __future__ import annotations
 
+import time
 from pathlib import Path
 from typing import Any
 
@@ -11,10 +12,12 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from app.config import get_settings
+from app.logstore import ConversationLog
 from app.rag import DocumentStore, RAGAssistant
 
 settings = get_settings()
 store = DocumentStore(settings.docs_dir)
+conversation_log = ConversationLog(settings.log_db_path)
 assistant = RAGAssistant(
     store,
     openai_api_key=settings.openai_api_key if settings.use_openai else None,
@@ -90,11 +93,21 @@ def health() -> HealthResponse:
 def ask(payload: AskRequest) -> AskResponse:
     if not payload.question.strip():
         raise HTTPException(status_code=422, detail="question must not be empty")
+    started = time.perf_counter()
     result = assistant.ask(
         payload.question.strip(),
         session_id=payload.session_id,
         use_tools=payload.use_tools,
         force_tool_failure=payload.force_tool_failure,
+    )
+    conversation_log.record(
+        session_id=payload.session_id,
+        question=payload.question.strip(),
+        answer=result.answer,
+        refused=result.refused,
+        refusal_reason=result.refusal_reason,
+        model=result.model,
+        latency_ms=(time.perf_counter() - started) * 1000,
     )
     return AskResponse(
         answer=result.answer,

@@ -17,6 +17,8 @@ Live demo + OpenAPI · Golden dataset (50) · DeepEval/Ragas-ready metrics · Sa
 | AI safety | Prompt injection, jailbreak, PII leakage, blocked topics (`tests/safety`, `promptfoo/`) |
 | Multi-turn & tools | Session memory + `lookup_warranty` success/failure recovery tests |
 | API testing | Contract tests from `/openapi.json` (Swagger/OpenAPI) |
+| SQL data validation | Every `/api/ask` call is logged; `tests/data` runs Athena-style SQL checks for empty answers, latency SLO, refusal reasons, PII leakage and cost fields |
+| Latency, cost, drift | `eval/run_eval.py` reports p50/p95 latency, estimated token cost, and fails on >0.05 drift vs `eval/baseline.json` |
 | Web UI automation | Playwright + Page Object Model |
 | Android automation | Appium POM (+ mobile Chrome emulation smoke for CI) |
 | Load / latency | Locust on `/api/ask` (p95) |
@@ -48,8 +50,12 @@ Open **http://127.0.0.1:8000** — UI, **http://127.0.0.1:8000/docs** — Swagge
 # API + safety + agent
 pytest -m "api or safety or agent"
 
-# Golden-set evaluation gate (exit 1 if thresholds fail)
+# SQL data validation over conversation logs
+pytest -m data
+
+# Golden-set evaluation gate (exit 1 if thresholds or drift fail)
 python eval/run_eval.py
+python eval/run_eval.py --update-baseline   # accept current scores as the new baseline
 
 # Playwright UI
 pytest -m ui

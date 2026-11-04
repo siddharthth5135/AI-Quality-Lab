@@ -11,5 +11,6 @@ markers = [
   "ui: Playwright UI tests",
   "mobile: Appium mobile tests",
   "agent: multi-turn and tool-calling tests",
+  "data: SQL data validation over conversation logs",
   "slow: slow tests skipped in fast CI",
 ]
