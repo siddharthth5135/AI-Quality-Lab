@@ -1,0 +1,4 @@
+# Optional LLM-as-judge stack (needs OPENAI_API_KEY)
+deepeval==2.3.0
+ragas==0.2.9
+datasets==3.2.0

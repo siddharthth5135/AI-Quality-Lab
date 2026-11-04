@@ -1,0 +1,15 @@
+[tool.pytest.ini_options]
+testpaths = ["tests", "eval"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-q --tb=short"
+markers = [
+  "eval: LLM evaluation suite",
+  "safety: AI safety / red-team tests",
+  "api: REST API tests",
+  "ui: Playwright UI tests",
+  "mobile: Appium mobile tests",
+  "agent: multi-turn and tool-calling tests",
+  "slow: slow tests skipped in fast CI",
+]

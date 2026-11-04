@@ -1,0 +1,1 @@
+"""AI Quality Lab — demo RAG assistant + evaluation surface."""
